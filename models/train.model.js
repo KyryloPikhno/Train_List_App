@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 const {dbInit} = require('../configs');
 
 
-const Train = dbInit.define('train', {
+const Train = dbInit.define('trains', {
     from_city: {
         type: Sequelize.STRING,
         allowNull: false
@@ -20,6 +20,8 @@ const Train = dbInit.define('train', {
         type: Sequelize.ARRAY(Sequelize.TIME),
         allowNull: false
     }
+}, {
+    underscored: true
 });
 
 module.exports = Train;
