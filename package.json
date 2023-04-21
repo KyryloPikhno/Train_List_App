@@ -1,0 +1,19 @@
+{
+  "name":"train-server",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "joi": "^17.7.0",
+    "moment": "^2.29.4",
+    "nodemon": "^2.0.20"
+  },
+  "devDependencies": {
+    "nodemailer": "^6.9.1",
+    "ws": "3.3.2"
+  }
+}
