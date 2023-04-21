@@ -2,8 +2,8 @@ const moment = require("moment/moment");
 
 const {trainRepository} = require("../repository");
 const {validator} = require('../validators');
-const {dateEnum} = require("../enum");
 const {ApiError} = require('../error');
+const {dateEnum} = require("../enum");
 const {Train} = require("../models");
 
 
@@ -63,7 +63,7 @@ module.exports = {
             const train = await Train.findByPk(id);
 
             if (!train) {
-                return res.status(404).json({message: 'Train not found'});
+                throw new ApiError('Train not found', 400);
             }
 
             req.train = train;
@@ -85,7 +85,7 @@ module.exports = {
                 throw new ApiError(error.details[0].message, 400);
             }
 
-            if (!moment(date, 'YYYY-MM-DD', true).isValid()) {
+            if (!moment(date, dateEnum.DATE_FORMAT, true).isValid()) {
                 throw new ApiError('Invalid date format', 400);
             }
 

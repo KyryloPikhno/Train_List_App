@@ -27,6 +27,9 @@ router.put('/:id' ,
     trainController.update
 );
 
-router.delete('/:id', trainController.delete);
+router.delete(
+    '/:id',
+    trainController.delete
+);
 
 module.exports = router;

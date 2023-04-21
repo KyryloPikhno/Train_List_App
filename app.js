@@ -19,7 +19,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
 app.get('/', (req, res) => {
     res.json('WELCOME');
 });
@@ -34,8 +33,8 @@ app.use((err, req, res, next) => {
 });
 
 dbInit.sync().then(() => {
-    app.listen(process.env.PORT, () => {
-        console.log(`Server started on port ${process.env.PORT}`);
+    app.listen(process.env.PORT || 5000, () => {
+        console.log(`Server started on port ${process.env.PORT || 5000}`);
     });
 });
 
