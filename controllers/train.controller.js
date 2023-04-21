@@ -1,4 +1,5 @@
 const {Train} = require('../models');
+
 const moment = require('moment');
 
 
@@ -53,26 +54,11 @@ module.exports = {
         }
     },
 
-    update: async (req, res) => {
-        const { id } = req.params;
+    update: async (req, res, next) => {
         try {
-            if (!moment(req.body.date, 'YYYY-MM-DD', true).isValid()) {
-                return res.status(400).json({ message: 'Invalid date format' });
-            }
-
-            const [rowsUpdated] = await Train.update(req.body, {
-                where: { id },
-            });
-
-            if (rowsUpdated === 0) {
-                return res.status(404).json({ message: 'Train not found' });
-            }
-
-            const updatedTrain = await Train.findByPk(id);
-
-            res.status(200).json(updatedTrain);
+            res.status(200).json(req.updatedTrain);
         } catch (e) {
-            res.status(500).json({ message: e.message });
+            next(e);
         }
     },
 

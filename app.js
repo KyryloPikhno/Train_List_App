@@ -19,11 +19,19 @@ app.use((req, res, next) => {
     next();
 });
 
+
 app.get('/', (req, res) => {
     res.json('WELCOME');
 });
 
 app.use('/train', trainRoute);
+
+app.use((err, req, res, next) => {
+    res.status(err.status || 500).json({
+        message: err.message || 'Unknown error',
+        status: err.status || 500
+    });
+});
 
 dbInit.sync().then(() => {
     app.listen(process.env.PORT, () => {
