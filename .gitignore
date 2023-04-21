@@ -1,2 +1,4 @@
 package-lock.json
+train-server.iml
 .idea
+.env
