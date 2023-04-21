@@ -1,13 +1,22 @@
-const {trainValidator} = require('../validators');
-const {ApiError} = require('../error');
 const moment = require("moment/moment");
+
+const {trainRepository} = require("../repository");
+const {validator} = require('../validators');
+const {dateEnum} = require("../enum");
+const {ApiError} = require('../error');
 const {Train} = require("../models");
 
 
 module.exports = {
-    checkIsTrainExist: async (req, res, next) => {
+    checkIsTrainExists: async (req, res, next) => {
         try {
+            const trains = await trainRepository.find(req.query);
 
+            if(!trains){
+                throw new ApiError('Trains not found', 404);
+            }
+
+            req.trains = trains;
 
             next();
         } catch (e) {
@@ -15,21 +24,49 @@ module.exports = {
         }
     },
 
-    // checkIsTrainExistsForUpdate: async (req, res, next) => {
-    //     try {
-    //
-    //
-    //         // req.train = train;
-    //
-    //         next();
-    //     } catch (e) {
-    //         next(e);
-    //     }
-    // },
+    checkIsIsBodyValid: async (req, res, next) => {
+        try {
+            const {name, from_city, to_city, date} = req.body;
+
+            const { error } = validator.trainValidator.validate({ name, from_city, to_city, date });
+
+            if (error) {
+                throw new ApiError(error.details[0].message, 400);
+            }
+
+            if (!moment(date, dateEnum.DATE_FORMAT, true).isValid()) {
+                throw new ApiError('Invalid date format', 400);
+            }
+
+            const train = await Train.create({
+                name,
+                from_city,
+                to_city,
+                date,
+            });
+
+            if (!train) {
+                throw new ApiError('Train is not created', 400);
+            }
+
+            req.train = train;
+
+            next();
+        } catch (e) {
+            next(e);
+        }
+    },
 
     checkIsTrainExistsById: async (req, res, next) => {
+        const {id} = req.params;
         try {
+            const train = await Train.findByPk(id);
 
+            if (!train) {
+                return res.status(404).json({message: 'Train not found'});
+            }
+
+            req.train = train;
 
             next();
         } catch (e) {
@@ -39,44 +76,31 @@ module.exports = {
 
     checkIsTrainExistsForUpdate: async (req, res, next) => {
         try {
-            const { id } = req.params;
+            const {id} = req.params;
+            const {name, from_city, to_city, date} = req.body;
 
-            const {from_city, to_city, date, departure_times} = req.body;
+            const { error } = validator.trainValidator.validate({ name, from_city, to_city, date });
 
-            if (!from_city || !to_city || !date || !departure_times) {
-                return res.status(400).json({message: 'Some field not found'});
+            if (error) {
+                throw new ApiError(error.details[0].message, 400);
             }
 
             if (!moment(date, 'YYYY-MM-DD', true).isValid()) {
-                return res.status(400).json({message: 'Invalid date format'});
+                throw new ApiError('Invalid date format', 400);
             }
 
-            const validate = trainValidator.validate({
-                from_city: req.body.from_city,
-                to_city: req.body.to_city,
-                date: req.body.date,
-                departure_times: req.body.departure_times
-            });
+            const [updated] = await Train.update({
+                name,
+                from_city,
+                to_city,
+                date,
+            }, {where: {id}});
 
-            if(validate.error) {
-                throw new ApiError(validate.error.message, 400);
+            if (!updated) {
+                throw new ApiError('Train is not updated', 400);
             }
 
-            const [rowsUpdated] = await Train.update(req.body, {
-                where: { id },
-            });
-
-            if (rowsUpdated === 0) {
-                return res.status(404).json({ message: 'Train not found' });
-            }
-
-            const updatedTrain = await Train.findByPk(id);
-
-            if (!updatedTrain) {
-                return res.status(404).json({message: 'Train not updated'});
-            }
-
-            req.updatedTrain = updatedTrain;
+            req.updatedTrain = await Train.findByPk(id);
 
             next();
         } catch (e) {

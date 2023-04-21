@@ -1,3 +1,3 @@
 module.exports = {
-    trainValidator: require('./train.validator')
+    validator: require('./train.validator')
 };
