@@ -10,7 +10,7 @@ router.get('/:id', trainController.getById);
 
 router.post('/', trainController.create);
 
-router.put('/:id', trainMiddleware.checkIsTrainExistsForUpdate ,trainController.update);
+router.put('/:id' ,trainController.update);
 
 router.delete('/:id', trainController.delete);
 
