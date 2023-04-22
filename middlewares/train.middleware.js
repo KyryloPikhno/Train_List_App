@@ -26,7 +26,7 @@ module.exports = {
 
     checkIsIsBodyValid: async (req, res, next) => {
         try {
-            const {name, from_city, to_city, date} = req.body;
+            const {name, from_city, to_city, date} = req.body.train;
 
             const { error } = validator.trainValidator.validate({ name, from_city, to_city, date });
 
@@ -77,7 +77,8 @@ module.exports = {
     checkIsTrainExistsForUpdate: async (req, res, next) => {
         try {
             const {id} = req.params;
-            const {name, from_city, to_city, date} = req.body;
+
+            const {name, from_city, to_city, date} = req.body.train;
 
             const { error } = validator.trainValidator.validate({ name, from_city, to_city, date });
 
