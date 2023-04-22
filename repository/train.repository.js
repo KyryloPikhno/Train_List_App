@@ -10,6 +10,7 @@ module.exports = {
         const {from_city, to_city, date} = params;
 
         let query = {};
+
         if (from_city && to_city && date) {
             if (!moment(date, dateEnum.DATE_FORMAT, true).isValid()) {
                 throw new Error('Invalid date format');
@@ -41,6 +42,10 @@ module.exports = {
                     date: moment(date).format(dateEnum.DATE_FORMAT),
                 },
             };
+        }
+
+        if (!from_city && !to_city && !date) {
+            return [];
         }
         return await Train.findAll(query);
     }
