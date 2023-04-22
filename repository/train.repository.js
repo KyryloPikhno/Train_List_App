@@ -21,6 +21,7 @@ module.exports = {
                     to_city,
                     date: moment(date).format(dateEnum.DATE_FORMAT),
                 },
+                order: [['date', 'ASC']]
             };
         } else if (from_city && to_city) {
             const nextWeek = moment().add(dateEnum.DAYS_COUNT, dateEnum.DAYS).format(dateEnum.DATE_FORMAT);
@@ -32,6 +33,7 @@ module.exports = {
                         [Op.between]: [moment().format(dateEnum.DATE_FORMAT), nextWeek],
                     },
                 },
+                order: [['date', 'ASC']]
             };
         } else if (date) {
             if (!moment(date, dateEnum.DATE_FORMAT, true).isValid()) {
@@ -47,6 +49,7 @@ module.exports = {
         if (!from_city && !to_city && !date) {
             return [];
         }
+
         return await Train.findAll(query);
     }
 };
