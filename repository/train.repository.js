@@ -3,6 +3,7 @@ const {Op} = require("sequelize");
 
 const {dateEnum} = require("../enum");
 const {Train} = require("../models");
+const momentDate = require("ws/lib/Extensions");
 
 
 module.exports = {
@@ -15,15 +16,16 @@ module.exports = {
             if (!moment(date, dateEnum.DATE_FORMAT, true).isValid()) {
                 throw new Error('Invalid date format');
             }
+            console.log('date before formatting:', date);
+            console.log('date after formatting:', momentDate.format(dateEnum.DATE_FORMAT));
             query = {
                 where: {
                     from_city,
                     to_city,
-                    date: moment(date).format(dateEnum.DATE_FORMAT),
+                    date: moment(date).add(1, 'day'),
                 },
-                order: [['date', 'ASC']]
             };
-        } else if (from_city && to_city) {
+            } else if (from_city && to_city) {
             const nextWeek = moment().add(dateEnum.DAYS_COUNT, dateEnum.DAYS).format(dateEnum.DATE_FORMAT);
             query = {
                 where: {
